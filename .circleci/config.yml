@@ -10,9 +10,16 @@ jobs:
           keys:
             - v1-dependencies-{{ checksum "package.json" }}
             - v1-dependencies-
-      - run: yarn install
+      - run:
+          name: Installing Dependencies
+          command: yarn install
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-      - run: yarn test
+      - run:
+          name: Testing [Unit]
+          command: yarn test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
+      - run:
+          name: Testing [End-to-End]
+          command: yarn e2e -- --protractor-config=e2e/protractor-ci.conf.js
