@@ -7,16 +7,19 @@ jobs:
     steps:
       - checkout
       - restore_cache:
+          name: Restoring Dependencies from Cache
           keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            - v1-dependencies-
+            - dependencies-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - dependencies-{{ .Branch }}-
+            - dependencies-
       - run:
           name: Installing Dependencies
-          command: yarn install
+          command: yarn install --frozen-lockfile
       - save_cache:
+          name: Caching Dependencies
           paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+            - ~/.cache/yarn
+          key: dependencies-{{ .Branch }}-{{ checksum "yarn.lock" }}
       - run:
           name: Linting
           command: yarn lint
